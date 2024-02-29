@@ -3,9 +3,40 @@ import sqlite3
 import random
 from sqlite3 import Error
 from contextlib import closing
+from cryptography.fernet import Fernet
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_FILE = os.path.join(BASE_DIR, 'baza.db')
+KEY_FILE = os.path.join(BASE_DIR, 'secret.key')
+
+
+# Ensure this runs only once to generate the key
+def generate_key():
+    if not os.path.exists(KEY_FILE):
+        key = Fernet.generate_key()
+        with open(KEY_FILE, "wb") as key_file:
+            key_file.write(key)
+
+def load_key():
+    try:
+        return open(KEY_FILE, "rb").read()
+    except FileNotFoundError:
+        print("Encryption key file not found. Generating a new one.")
+        generate_key()
+        return open(KEY_FILE, "rb").read()
+
+# Use the load_key function to read the encryption key
+def encrypt_message(message):
+    key = load_key()
+    f = Fernet(key)
+    encrypted_message = f.encrypt(message.encode())
+    return encrypted_message
+
+def decrypt_message(encrypted_message):
+    key = load_key()
+    f = Fernet(key)
+    decrypted_message = f.decrypt(encrypted_message).decode()
+    return decrypted_message
 
 
 
@@ -63,6 +94,17 @@ def create_contacts_table(conn):
             );'''
     execute_query(conn, sql)
 
+def create_messages_table(conn):
+    sql = '''CREATE TABLE IF NOT EXISTS messages (
+                message_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                sender_id INTEGER,
+                receiver_id INTEGER,
+                message_text TEXT,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (sender_id) REFERENCES users(user_id),
+                FOREIGN KEY (receiver_id) REFERENCES users(user_id)
+            );'''
+    execute_query(conn, sql)
 
 
 def execute_query(conn, sql):
@@ -91,6 +133,16 @@ def create_database():
         create_contacts_table(conn)  # Add this line to create the contacts table
         conn.close()
 
+def create_database():
+    conn = create_connection()
+    if conn:
+        create_users_table(conn)
+        create_authentication_table(conn)
+        create_device_info_table(conn)
+        create_contacts_table(conn)
+        create_messages_table(conn)  # Ensure this is the only call
+        conn.close()
+
 def generate_unique_key():
     # Генерируем уникальный ключ из 12 цифр
     unique_key = ''.join([str(random.randint(0, 9)) for _ in range(12)])
@@ -111,6 +163,29 @@ def insert_contact_data(conn, user_id, name, unique_number):
         import traceback
         traceback.print_exc()
         print(f"Error in insert_contact_data: {str(e)}")
+
+def get_user_id_by_name(conn, full_name):
+    """Возвращает идентификатор пользователя по его полному имени."""
+    cursor = conn.cursor()
+    cursor.execute("SELECT user_id FROM users WHERE full_name = ?", (full_name,))
+    result = cursor.fetchone()
+    if result:
+        return result[0]
+    return None
+
+
+
+def fetch_messages(conn, user_id, contact_id):
+    """Извлекает сообщения между двумя пользователями."""
+    cursor = conn.cursor()
+    cursor.execute("""SELECT message, timestamp FROM messages
+                      WHERE (sender_id = ? AND receiver_id = ?)
+                      OR (sender_id = ? AND receiver_id = ?)
+                      ORDER BY timestamp ASC""",
+                   (user_id, contact_id, contact_id, user_id))
+    messages = cursor.fetchall()
+    return [{'message': message[0], 'timestamp': message[1]} for message in messages]
+
 
 def insert_user_data(conn, full_name, password, secret_word, ip_address, mac_address):
     user_sql = "INSERT INTO users (full_name, unique_number) VALUES (?, ?)"
@@ -146,6 +221,7 @@ def user_exists(conn, unique_number):
     #     conn.close()
 
 
+
 def get_contacts_list(db_file):
     """
     Функция для получения списка имен контактов из базы данных.
@@ -173,6 +249,36 @@ def get_contacts_list(db_file):
         contacts_list = [contact[0] for contact in contacts]
 
     return contacts_list
+
+
+def insert_message(conn, sender_id, receiver_id, message_text):
+    try:
+        encrypted_message = encrypt_message(message_text)
+        sql = '''INSERT INTO messages (sender_id, receiver_id, message_text)
+                 VALUES (?, ?, ?)'''
+        with conn:
+            conn.execute(sql, (sender_id, receiver_id, encrypted_message))
+    except Error as e:
+        print(f"Error inserting message: {e}")
+
+
+
+def get_messages(conn, sender_id, receiver_id):
+    sql = '''SELECT * FROM messages
+             WHERE sender_id = ? AND receiver_id = ?
+             OR sender_id = ? AND receiver_id = ?
+             ORDER BY timestamp'''
+    cursor = conn.cursor()
+    cursor.execute(sql, (sender_id, receiver_id, receiver_id, sender_id))
+    encrypted_messages = cursor.fetchall()
+    decrypted_messages = []
+    for msg in encrypted_messages:
+        decrypted_text = decrypt_message(msg["message_text"])
+        decrypted_messages.append({**msg, "message_text": decrypted_text})
+    return decrypted_messages
+
+
+
 
 
 def get_mac_address(environ):

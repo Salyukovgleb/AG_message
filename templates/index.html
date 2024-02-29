@@ -27,7 +27,15 @@
                     <i class="fa-solid fa-plus"></i>
                 </button>
                 <div>
-                    <button type="button" id="logoutButton" class="btn btn-dark">Выйти из системы</button>
+
+                    <form action="/logout" method="post">
+                    <button type="submit">Выйти</button>
+                    </form>
+
+
+
+
+
                 </div>
                 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                     aria-hidden="true">
@@ -78,6 +86,7 @@
                         <div class="chat-input">
                             <input type="text" id="message-input" placeholder="Введите сообщение...">
                             <button id="send-message">Отправить</button>
+
                         </div>
                     </div>
 
@@ -101,8 +110,11 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
 
-    <script src="/static/js/contact.js"></script>
     <script src="/static/js/main.js"></script>
+    <script src="https://cdn.socket.io/4.2.0/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+
+
 
     <!-- Replace onclick="addNewContact()" with onclick="add_contact()" -->
 

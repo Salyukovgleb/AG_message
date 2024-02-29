@@ -1,10 +1,73 @@
+let socket;
 document.addEventListener('DOMContentLoaded', function () {
-    startInactivityTimer();
-    updateContactList(); // Предполагается, что вы хотите загрузить и отобразить контакты при загрузке страницы
+    // Инициализация Socket.IO соединения
+    socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    // Логирование событий подключения и отключения
+    socket.on('connect', function() {
+        console.log('Connected to the server.');
+    });
+    socket.on('disconnect', function() {
+        console.log('Disconnected from the server.');
+    });
+
+    // Прослушивание новых сообщений от сервера
+    socket.on('new_message', function(data) {
+    displayMessage(data);
+    });
+
+
+
+    // Обработчик клика по кнопке отправки сообщения
+    document.getElementById('send-message').addEventListener('click', function() {
+    sendChatMessage();
 });
 
-// SocketIO connection
-const socketio = io();
+
+    // Инициализация списка контактов и других необходимых компонентов
+    updateContactList();
+    // Другие инициализации по необходимости...
+});
+
+function sendChatMessage() {
+    const messageInput = document.getElementById('message-input');
+    const message = messageInput.value.trim();
+    if (!message) return;
+
+    // Предполагается, что sender и receiver устанавливаются в соответствии с вашей логикой
+    const sender = 'Sender Name'; // Нужно заменить на актуальные данные
+    const receiver = 'Receiver Name'; // Нужно заменить на актуальные данные
+
+    socket.emit('send_message', { sender, receiver, message });
+    messageInput.value = ''; // Очистка поля ввода после отправки
+}
+
+function displayMessage(data) {
+    const chatMessages = document.getElementById('chat-messages');
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message'); // Добавляем класс для стилизации
+    messageElement.innerHTML = `<strong>${data.sender}:</strong> ${data.message}`;
+    chatMessages.appendChild(messageElement);
+
+    // Прокрутка к последнему сообщению
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function sendMessage(sender, receiver, message) {
+    socket.emit('send_message', {sender: sender, receiver: receiver, message: message});
+}
+document.getElementById('send-message').addEventListener('click', function() {
+    const messageInput = document.getElementById('message-input');
+    const message = messageInput.value;
+    if (message.trim() === '') return;
+
+    // Предположим, что у вас есть функция для получения текущего пользователя и получателя
+    const sender = 'Имя отправителя'; // Замените на актуальные данные
+    const receiver = 'Имя получателя'; // Замените на актуальные данные
+
+    socket.emit('send_message', { sender, receiver, message });
+    messageInput.value = ''; // Очищаем поле ввода после отправки
+});
 
 // Function to add a new contact
 function add_contact() {
@@ -107,21 +170,23 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-function logout() {
-    axios.get('/logout')
-        .then(response => {
-            if (response.data && response.data.success) {
-                // Clear session and redirect to the signin page
-                session.clear();
-                window.location.replace('/signin');
-            } else {
-                console.error('Logout failed:', response.data ? response.data.error : 'Unknown error');
-            }
-        })
-        .catch(error => {
-            console.error('Error during logout:', error);
-        });
-}
+// Предположим, у вас есть кнопка выхода с id="logoutButton"
+document.getElementById('logoutButton').addEventListener('click', function() {
+    console.log('Logout button clicked'); // Проверьте, появляется ли это в консоли
+    fetch('/logout', {
+        method: 'GET',
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Redirecting to signin'); // Добавьте для отладки
+            window.location.href = '/signin';
+        }
+    })
+    .catch(error => console.error('Ошибка выхода:', error));
+});
+
+
+
 
 
 // Function to start the inactivity timer
@@ -233,88 +298,6 @@ function openChatWithContact(contactName) {
 
 
 
-// Отправка сообщения на сервер
-document.getElementById('send-message').addEventListener('click', function() {
-    const messageInput = document.getElementById('message-input');
-    const message = messageInput.value.trim();
-    if (message) {
-        // Предположим, что sender и receiver установлены где-то в вашем коде
-        socket.emit('send_message', {sender: 'Имя отправителя', receiver: 'Имя получателя', message: message});
-        messageInput.value = ''; // Очистка поля ввода
-
-        // Добавляем сообщение в чат
-        const chatMessages = document.getElementById('chat-messages');
-        const messageElement = document.createElement('div');
-        messageElement.textContent = `Вы: ${message}`;
-        chatMessages.appendChild(messageElement);
-    }
-});
-
-
-// Прослушивание новых сообщений от сервера
-socket.on('new_message', function(data) {
-    const chatMessages = document.getElementById('chat-messages');
-    const messageElement = document.createElement('div');
-    messageElement.textContent = `${data.sender}: ${data.message}`;
-    chatMessages.appendChild(messageElement);
-});
-
-
-
-
-
-
-function sendChatMessage(contactName) {
-    const messageInput = document.getElementById('message-input');
-    const message = messageInput.value.trim();
-    if (message) {
-        console.log(`Отправка сообщения "${message}" пользователю ${contactName}`);
-        // Здесь код для отправки сообщения на сервер...
-
-        // Добавляем сообщение в чат сразу после отправки
-        const chatMessages = document.getElementById('chat-messages');
-        const messageElement = document.createElement('div');
-        messageElement.textContent = message; // Ваше сообщение
-        chatMessages.appendChild(messageElement);
-
-        messageInput.value = ''; // Очищаем поле ввода после отправки
-    }
-}
-
-
-// Должно быть внутри функции updateContactList после успешного получения списка контактов
-response.data.contacts.forEach(contact => {
-    const li = document.createElement('li');
-    li.textContent = contact.name;
-    li.classList.add('contact-item');
-    li.addEventListener('click', () => openChatWithContact(contact.name)); // Убедитесь, что это работает
-    contactsList.appendChild(li);
-});
-
-contacts.forEach(contact => {
-    const li = document.createElement('li');
-    li.textContent = contact.name;
-    li.addEventListener('click', () => {
-        openChatWithContact(contact.name);
-    });
-    contactsList.appendChild(li);
-});
-
-
-
-
-
-// Подключение к Socket.IO
-var socket = io.connect('http://' + document.domain + ':' + location.port);
-
-// Отправка сообщения на сервер
-socket.emit('send_message', {sender: 'Артем', receiver: 'Ботыр', message: 'Привет!'});
-
-// Прослушивание новых сообщений от сервера
-socket.on('new_message', function(data) {
-    console.log(data);
-    // Здесь код для добавления сообщения в чат на клиенте
-});
 
 
 
