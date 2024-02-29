@@ -1,0 +1,390 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+body {
+  font-family: "Poppins", sans-serif;
+}
+
+:root {
+  --color-dark: #000;
+  --color-black: #18191d;
+  --color-hover: #353c43;
+  --color-input: #3d444b;
+  --color-text: #82868a;
+  --color-light: #dbdbdb;
+  --color-button: #8d939e;
+}
+
+.hight_100 {
+  height: 100vh;
+  overflow: auto;
+  position: relative;
+}
+
+.hight_100::-webkit-scrollbar {
+  background: #000;
+  width: 6px;
+}
+.hight_100::-webkit-scrollbar-track {
+  background: #000;
+}
+.hight_100::-webkit-scrollbar-thumb {
+  background: #000000;
+  border-radius: 10px;
+}
+
+.rowing {
+  width: 100%;
+  display: flex;
+}
+.col-1 {
+  width: 70px;
+  background: var(--color-black);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.col-1 button {
+  width: 100%;
+  padding: 10px 0;
+  background: transparent;
+  border: none;
+  color: var(--color-button);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.col-1 button:hover {
+  background: var(--color-hover);
+}
+
+.col-1 button i {
+  font-size: 20px;
+}
+
+.col-1 button span {
+  font-size: 12px;
+  margin: 0;
+}
+
+.col-3 {
+  width: 376px;
+  background: var(--color-dark);
+}
+.col-8 {
+  flex: 1;
+  background: var(--color-black);
+}
+
+ul li {
+  list-style-type: none;
+}
+
+#conatcts li:hover {
+  background: var(--color-hover);
+}
+
+ul li input {
+  border-radius: 4px;
+  border: none;
+  outline: none;
+  font-size: 14px !important;
+  background: var(--color-input);
+  padding: 6px 12px;
+  color: var(--color-text);
+}
+
+.bg_main_text p {
+  padding: 2px 14px;
+  border-radius: 30px;
+  background: #ffffff22;
+}
+
+ul li i {
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+::placeholder {
+  font-size: 14px !important;
+  color: var(--color-text);
+}
+
+ul li img {
+  width: 46px;
+  height: 46px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+ul li div p {
+  font-size: 14px;
+  margin: 0;
+  color: var(--color-text);
+}
+
+ul li div span {
+  color: var(--color-text);
+  font-size: 14px;
+}
+
+.person_header {
+  background: var(--color-dark);
+  color: var(--color-text);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  right: 0;
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.icons i {
+  font-size: 16px;
+}
+
+.icons i:hover {
+  color: var(--color-light);
+}
+
+.person_header span {
+  font-size: 14px;
+}
+
+.person_footer {
+  position: sticky;
+  width: 100%;
+  bottom: 0;
+  right: 0;
+}
+
+#chat {
+  height: 85.2vh;
+  overflow: auto;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+}
+h1 {
+  margin: 0;
+}
+
+#chat::-webkit-scrollbar {
+  background: var(--color-input);
+  width: 6px;
+  border-radius: 30px;
+}
+
+#chat::-webkit-scrollbar-thumb {
+  background: var(--color-text);
+  border-radius: 30px;
+}
+
+.scrol::-webkit-scrollbar {
+  background: var(--color-input);
+  width: 6px;
+  border-radius: 30px;
+}
+
+.scrol::-webkit-scrollbar-thumb {
+  background: var(--color-text);
+  border-radius: 30px;
+}
+
+.send_text {
+  width: 100%;
+  background: var(--color-dark);
+  display: flex;
+  align-items: center;
+}
+
+.send_text input {
+  background: transparent;
+  border: none;
+  outline: none;
+  flex: 1;
+  color: var(--color-light);
+  font-size: 14px;
+}
+
+.send_text input::placeholder {
+  color: var(--color-text) !important;
+  padding: 0 4px;
+}
+
+.send_text button {
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--color-text);
+  font-size: 20px;
+}
+
+.chat_massage {
+  display: flex;
+  align-items: end;
+}
+
+.chat_massage .massage {
+  background: var(--color-input);
+  color: var(--color-light);
+  border-radius: 10px;
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  padding: 6px 10px;
+}
+
+.massage p {
+  font-size: 16px;
+  margin: 0;
+}
+
+.massage span {
+  font-size: 12px;
+}
+
+.chat_massage img {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.active {
+  background: var(--color-hover) !important;
+}
+
+::-webkit-scrollbar {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #000;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+.add_new_contact {
+  position: fixed;
+  z-index: 20;
+  bottom: 20px;
+  left: 20%;
+  width: 44px;
+  height: 44px;
+  border: none;
+  outline: none;
+  background: var(--color-black);
+  color: var(--color-light);
+  box-shadow: 0 0 6px 4px var(--color-dark);
+}
+
+.add {
+  background: transparent !important;
+  color: var(--color-light) !important;
+}
+
+.add::placeholder {
+  color: var(--color-light);
+  background: transparent !important;
+}
+
+
+/* Стили для списка контактов */
+/* Стили для основного приложения */
+#app {
+    display: flex;
+    height: 100vh; /* Полная высота экрана */
+}
+
+/* Стили для списка контактов */
+.contacts-list {
+    width: 300px; /* Фиксированная ширина для списка контактов */
+    overflow-y: auto; /* Прокрутка, если контент выходит за пределы */
+    border-right: 1px solid #ccc; /* Разделитель между списком контактов и чатом */
+    padding: 10px;
+    background-color: #333; /* Темный фон */
+    color: #FFF; /* Белый текст */
+}
+
+/* Стили для элементов списка контактов */
+#contacts li {
+    display: block; /* Занимает всю доступную ширину, что улучшает кликабельность */
+    padding: 10px; /* Отступы вокруг текста */
+    margin-bottom: 10px; /* Отступ между элементами списка */
+    border-radius: 5px; /* Скругленные углы */
+    background-color: #007bff; /* Цвет фона элемента списка */
+    color: white; /* Цвет текста */
+    cursor: pointer; /* Индикатор кликабельности */
+    transition: background-color 0.3s; /* Плавное изменение фона при наведении */
+}
+
+#contacts li:hover {
+    background-color: #0056b3; /* Темно-синий цвет фона при наведении */
+}
+
+/* Стили для окна чата */
+.chat-window {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Стили для области сообщений */
+.chat-messages {
+    flex-grow: 1;
+    overflow-y: auto; /* Прокрутка, если контент выходит за пределы */
+    padding: 10px;
+    background-color: #f8f9fa; /* Светлый фон */
+}
+
+/* Стили для панели ввода сообщения */
+.chat-input {
+    display: flex;
+    padding: 10px;
+    background-color: #f8f9fa;
+}
+
+.chat-input input[type="text"] {
+    flex-grow: 1;
+    margin-right: 10px;
+    padding: 5px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+}
+
+.chat-input button {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.chat-input button:hover {
+    background-color: #0056b3;
+}
+
+/* Дополнительные стили для заголовка чата */
+#person_chat h3 {
+    margin: 0;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+}
+
+
